@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 
 # EAGLE imports
 from read_eagle import EagleSnapshot
-from read_header import read_header
+#from read_header import read_header
 
 # Filament catalogue imports
 from catalogue_reader import CatalogueReader
+from filament_dump import FilamentDump
 
 class Filaments:
     """
@@ -30,6 +31,9 @@ class Filaments:
         self._itype = part_type
         self._data = None # will be set by read_particles
 
+        # Set instance of FilamentDump, might need it later
+        self._dumper = FilamentDump()
+
         # Load information from the header
         self._a, self._h, self._boxsize = catalogue.header_info()
         self._dataloc = catalogue.snap_loc()
@@ -41,14 +45,11 @@ class Filaments:
 
             # if size is one we need to wrap a list around it for it to be
             # usable in read_particles
-            print self._centres.shape
             if len(self._centres.shape) == 1:
-                print "fixing"
                 self._centres = self._centres.reshape((1,3))
 
-        print "Centres"
-        print self._centres
-        print self._centres[0]
+        #print "Centres"
+        #print self._centres
         # Load data
         self.read_particles()
 
@@ -63,10 +64,11 @@ class Filaments:
         # Initialize read_eagle module.
         eagle_data = EagleSnapshot(self._dataloc)
 
-        for centre in self._centres:
+        for i, centre in enumerate(self._centres):
             # Put centre into cMpc/h units.
             centre *= self._h
-            print centre
+            if i % 10 == 0:
+                print "Current box centre (No. {}): is".format(i+1), centre
 
             # Select region to load, a 'load_region_length' cMpc/h cube centred on 'centre'.
             region = np.array([
@@ -93,6 +95,7 @@ class Filaments:
                 data[att] = data[att][mask]
             """
 
+
         self._data = data
 
     def atts(self):
@@ -100,6 +103,12 @@ class Filaments:
 
     def data(self):
         return self._data
+
+    def dump(self, outfile):
+        self._dumper.dump(self._data, outfile)
+
+    def gather(self, files, outfile):
+        self._dumper.gather(files, outfile)
 
     def hist(self, att='Density', title='', saveas='_hist.png'):
         """
