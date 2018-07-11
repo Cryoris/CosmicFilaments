@@ -8,25 +8,26 @@ catalogue = CatalogueReader("FILAMENT_CATALOGUE/s12.csv")
 # If indices for catalogue data is given define it!
 # Use to parallelise data loading
 argc = len(sys.argv)
-if argc > 3:
-   catalogue_index = np.arange(sys.argv[1], sys.argv[2])
-elif argc > 2:
-    catalogue_index = sys.argv[1]
+if argc > 2:
+   catalogue_index = np.arange(int(sys.argv[1]), int(sys.argv[2]))
+elif argc > 1:
+    catalogue_index = int(sys.argv[1])
 
 targets = ["Baryon"]
 
 if "Test" in targets:
     region_length = 0.01 # small test region
-    catalogue_index = 0 # need only one location
+    #catalogue_index = 0 # need only one location
     fil = Filaments(attributes, catalogue, region_length, catalogue_index)
 
+    """
     # Dump data
     files = ["test{}.dump".format(i) for i in range(1,5)]
     for f in files:
         fil.dump(f)
 
     fil.gather(files, "test.dump")
-
+    """
     # Plot
     fil.hist('Density', title='Density histogram, RL = ' + str(region_length), saveas="_test.png")
     fil.hist('Temperature', title='Temperature histogram, RL = ' + str(region_length), saveas="_test.png")
@@ -71,7 +72,7 @@ if "Baryon" in targets:
     baryon_ctlg = CatalogueReader("/scratch/jgacon/DisPerSE/EAGLE/BARYONS/REFL0012N0188/FILAMENT/s3_baryons.csv")
     fil = Filaments(attributes, baryon_ctlg, region_length=0.01, catalogue_index=catalogue_index)
 
-    fil.dump("fil.{}.dump".format(catalogue_index[0]))
+    #fil.dump("fil.{}.dump".format(catalogue_index[0]))
 
     #screen = Visualiser()
     #screen.hist(fil, 'Density', title='Baryonic filaments', saveas="_hist_bary.png")

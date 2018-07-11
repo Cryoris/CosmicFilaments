@@ -22,7 +22,7 @@ class Filaments:
             catalogue: CatalogueReader with filament catalogue
                        --> see file catalogue_reader.py
             catalogue_index: all particles in filament catalogue (None)
-                             or just certain ones (e.g. 1:8)?
+                             or in the range [index[0], index[-1]]?
             region_length: cube length of particle region
         """
 
@@ -38,10 +38,47 @@ class Filaments:
         self._a, self._h, self._boxsize = catalogue.header_info()
         self._dataloc = catalogue.snap_loc()
 
-        # Load centres from filament catalogue
-        self._centres = catalogue.load()
-        if not (catalogue_index is None):
-            self._centres = self._centres[catalogue_index, :]
+        num_centres = catalogue.num_centres()
+        print "Number of centres in filament:", num_centres
+
+        if catalogue_index is None:
+            self._centres = catalogue.load()
+        else:
+            # Validating catalogue_index
+            # Is it a single number or a list/array?
+            if isinstance(catalogue_index, int):
+                # If number is too high, don't load any particle
+                if catalogue_index >= num_centres:
+                    print "Catalogue index too high, no particle loaded."
+                else:
+                    self._centres = catalogue.load(catalogue_index, catalogue_index + 1)
+            else:
+                # Correct order?
+                if catalogue_index[-1] < catalogue_index[0]:
+                    print "Invalid catalogue index. Order must be increasing."
+                    return
+                # If upper index to high cut back
+                if (catalogue_index[-1] >= num_centres) and (catalogue_index[0] < num_centres):
+                    print "Catalogue index too high, setting it back to the proper range:"
+                    print catalogue_index[0], "to", num_centres-1
+                    catalogue_index = np.arange(catalogue_index[0], num_centres)
+                # If lower index to high as well, return and don't load any particles
+                elif catalogue_index[0] >= num_centres:
+                    print "Catalogue index completely out of range. Reading no particles."
+                    return
+                # Did we set it to the same number?
+                if catalogue_index[0] == catalogue_index[-1]:
+                    catalogue_index = catalogue_index[0]
+                    self._centres = catalogue.load(catalogue_index, catalogue_index + 1)
+                # Else it's fine.
+                else:
+                    self._centres = catalogue.load(catalogue_index[0], catalogue_index[-1])
+
+            print catalogue_index
+            # Load centres from filament catalogue
+            print "Shape of self._centres:", self._centres.shape
+            print "catalogue_index:", catalogue_index
+            #self._centres = self._centres[catalogue_index, :]
 
             # if size is one we need to wrap a list around it for it to be
             # usable in read_particles
