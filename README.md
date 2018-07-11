@@ -1,8 +1,8 @@
 # Overview
 
 These tools allow extraction of particles in the vicinity of filaments, as well as 
-the visualisation of their properties, such as density $\rho$, temperature $T$, mass, metallicity, and so on.
-Currently this is available in form of a histogram or a $\rho - T$ phase diagram.
+the visualisation of their properties, such as density _p_, temperature _T_, mass, metallicity, and so on.
+Currently this is available in form of a histogram or a _p - T_ phase diagram.
 
 ## Approach
 
