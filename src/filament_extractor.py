@@ -26,6 +26,7 @@ class Filaments:
             region_length: cube length of particle region
         """
 
+        # Save parameters & variables
         self._att = attributes
         self._region_length = region_length
         self._itype = part_type
@@ -38,6 +39,24 @@ class Filaments:
         self._a, self._h, self._boxsize = catalogue.header_info()
         self._dataloc = catalogue.snap_loc()
 
+        # Get filament centres from filament catalogue as defined by indices
+        # Note, that the index fight in that function is only necessary, if the
+        # catalogue index is set, otherwise it just reads all centres
+        # This doesn't return anything, it directly sets the variable
+        # self._centres to a 2d array of the centres, shape (ncentres, 3)
+        self.read_filament_centres(catalogue, catalogue_index)
+        # Get the box volumes around the centres as defined by load_region_length
+        # Directly sets self._volumes to a 2d array, shape (ncentres, 6)
+        self.get_readout_volumes()
+        # Load data thats within self._volumes
+        self.read_particles()
+
+    def read_filament_centres(self, catalogue, catalogue_index):
+        """
+            Read filament centres from filament catalogue as specified
+            in catalogue index
+        """
+        # Info
         num_centres = catalogue.num_centres()
         print "Number of centres in filament:", num_centres
 
@@ -74,22 +93,21 @@ class Filaments:
                 else:
                     self._centres = catalogue.load(catalogue_index[0], catalogue_index[-1])
 
+            # Info
             print catalogue_index
+
             # Load centres from filament catalogue
             print "Shape of self._centres:", self._centres.shape
             print "catalogue_index:", catalogue_index
             #self._centres = self._centres[catalogue_index, :]
 
-            # if size is one we need to wrap a list around it for it to be
+            # if size is one we need to convert it to a 2d array for it to be
             # usable in read_particles
             if len(self._centres.shape) == 1:
                 self._centres = self._centres.reshape((1,3))
 
-        #print "Centres"
-        #print self._centres
-        # Load data
-        self.read_particles()
-
+    def get_readout_volumes(self):
+        pass
 
     def read_particles(self):
         """
