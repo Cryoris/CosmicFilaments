@@ -1,4 +1,7 @@
 # /net/astrogate/export/astrodata/EAGLE_snapshots/RefL0012N0188/snapshot_012_z003p017/snap_012_z003p017.0.hdf5
+# 12.5
+# 6644672
+# Baryons from EAGLE snapshot w/ DisPerSE
 "persistence_ratio","persistence_nsigmas","persistence","persistence_pair","parent_index","parent_log_index","log_field_value","field_value","cell","critical_index","coords:0","coords:1","coords:2"
 30.913,3.2721,0.51332,8,3,4,-0.27533,0.53048,52,3,24.749,5.2517,14.9
 13.083,2.6318,0.63775,6,4,4,-0.16082,0.69053,143,3,11.748,6.9668,3.594
