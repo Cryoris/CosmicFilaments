@@ -13,14 +13,17 @@ if argc > 2:
 elif argc > 1:
     catalogue_index = int(sys.argv[1])
 
-targets = ["Baryon"]
+targets = ["Test"]
 
 if "Test" in targets:
-    region_length = 0.01 # small test region
-    #catalogue_index = 0 # need only one location
+    region_length = 0.5 # small test region
+    catalogue_index = np.arange(10) # need only one location
     fil = Filaments(attributes, catalogue, region_length, catalogue_index)
 
+    data = fil.data()
+
     """
+        
     # Dump data
     files = ["test{}.dump".format(i) for i in range(1,5)]
     for f in files:
@@ -29,8 +32,8 @@ if "Test" in targets:
     fil.gather(files, "test.dump")
     """
     # Plot
-    fil.hist('Density', title='Density histogram, RL = ' + str(region_length), saveas="_test.png")
-    fil.hist('Temperature', title='Temperature histogram, RL = ' + str(region_length), saveas="_test.png")
+    #fil.hist('Density', title='Density histogram, RL = ' + str(region_length), saveas="_test.png")
+    #fil.hist('Temperature', title='Temperature histogram, RL = ' + str(region_length), saveas="_test.png")
 
 if "Filament" in targets:
     # Filament
